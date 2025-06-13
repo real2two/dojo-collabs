@@ -1,4 +1,6 @@
 import {
+	ANNOUNCE_CHANNEL_ID,
+	ANNOUNCE_ROLE_ID,
 	BYPASS_ROLE_IDS,
 	CHANNEL_ID,
 	GUILD_ID,
@@ -20,6 +22,7 @@ import {
 	deletePendingCollab,
 	getCachedPendingCollab,
 	removeUserCollabCooldown,
+	setPendingCollabBotMessage,
 	setUserCollabCooldown,
 } from "./lib/functions";
 import { ellipsisText, timestamp } from "./utils";
@@ -27,7 +30,10 @@ import { ellipsisText, timestamp } from "./utils";
 export const client = new GatewayClient({
 	token: TOKEN,
 	intents:
-		Intents.Guilds | Intents.GuildMembers | Intents.GuildMessageReactions,
+		Intents.Guilds |
+		Intents.GuildMembers |
+		Intents.GuildMessages |
+		Intents.GuildMessageReactions,
 
 	events: {
 		[ListenerEvent.Ready]: () => console.info("Bot is ready"),
@@ -85,7 +91,7 @@ export const client = new GatewayClient({
 			]);
 
 			// Send the message
-			await client.rest.sendMessage(thread.id, {
+			const message = await client.rest.sendMessage(thread.id, {
 				embeds: [
 					{
 						color: 0xfc0303,
@@ -106,6 +112,18 @@ export const client = new GatewayClient({
 
 			// Leave the thread
 			await client.rest.leaveThread(thread.id);
+
+			// Save bot's message ID into the database
+			const saved_message_into_db = await setPendingCollabBotMessage({
+				id: thread.id,
+				bot_message_id: message.id,
+			});
+			if (!saved_message_into_db) {
+				// If it fails, delete the message ID
+				// This deletes the message in a race condition where you meet the
+				// star requirements before the bot even gets to saving this data.
+				await client.rest.deleteMessage(thread.id, message.id);
+			}
 		},
 		[ListenerEvent.ThreadDelete]: async (thread) => {
 			// Delete the pending collab from the database
@@ -176,6 +194,44 @@ export const client = new GatewayClient({
 				name: pending_collab.name,
 				archived: false,
 				locked: false,
+			});
+
+			// Delete original bot message
+			if (pending_collab.bot_message_id) {
+				await client.rest.deleteMessage(
+					pending_collab.id,
+					pending_collab.bot_message_id,
+				);
+			}
+
+			// Send an announcement message
+			const host_user = await client.rest.getMember(
+				GUILD_ID,
+				pending_collab.user_id,
+			);
+			const original_message = await client.rest.getMessage(
+				pending_collab.id,
+				pending_collab.id,
+			);
+			await client.rest.sendMessage(ANNOUNCE_CHANNEL_ID, {
+				content: `<@&${ANNOUNCE_ROLE_ID}>`,
+				embeds: [
+					{
+						color: 0xfc0303,
+						description: `
+							# ${pending_collab.name} hosted by <@${pending_collab.user_id}> is now taking entries!
+							## Check it out here! ${pending_collab.name}
+						`,
+						thumbnail: {
+							url: host_user?.avatar
+								? `https://cdn.discordapp.com/avatars/${pending_collab.user_id}/${host_user.avatar}`
+								: `https://cdn.discordapp.com/embed/avatars/${(BigInt(pending_collab.user_id) >> 22n) % 6n}`,
+						},
+						image: original_message?.attachments?.[0]?.proxyUrl
+							? { url: original_message.attachments[0].proxyUrl }
+							: undefined,
+					},
+				],
 			});
 		},
 		[ListenerEvent.MessageReactionRemove]: async (reaction) => {
