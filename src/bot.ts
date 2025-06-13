@@ -55,7 +55,7 @@ export const client = new GatewayClient({
 				return;
 
 			// Store in a database the newly created collab thread
-			await createPendingCollab({
+			const finished_creating_pending_collab = createPendingCollab({
 				id: thread.id,
 				name: thread.name,
 				user_id: thread.owner_id,
@@ -67,6 +67,7 @@ export const client = new GatewayClient({
 				thread.owner_id,
 			);
 			if (member.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
+				await finished_creating_pending_collab;
 				return deletePendingCollab(thread.id);
 			}
 
@@ -114,6 +115,7 @@ export const client = new GatewayClient({
 			await client.rest.leaveThread(thread.id);
 
 			// Save bot's message ID into the database
+			await finished_creating_pending_collab;
 			const saved_message_into_db = await setPendingCollabBotMessage({
 				id: thread.id,
 				bot_message_id: message.id,
