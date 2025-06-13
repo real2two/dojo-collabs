@@ -1,4 +1,4 @@
-import { eq, lt } from "drizzle-orm";
+import { eq, inArray, lt } from "drizzle-orm";
 import { collab_cooldown, db } from "../db";
 
 /**
@@ -30,8 +30,16 @@ export async function setUserCollabCooldown(user_id: string) {
 
 /**
  * Remove the collab cooldown on someone
- * @param user_id The user ID to set the cooldown to
+ * @param user_id The user ID to remove the cooldown from
  */
 export async function removeUserCollabCooldown(user_id: string) {
 	await db.delete(collab_cooldown).where(eq(collab_cooldown.id, user_id));
+}
+
+/**
+ * Remove the collab cooldown from many people
+ * @param user_ids The user IDs to remove the cooldown from
+ */
+export async function removeManyCollabCooldowns(user_ids: string[]) {
+	await db.delete(collab_cooldown).where(inArray(collab_cooldown.id, user_ids));
 }

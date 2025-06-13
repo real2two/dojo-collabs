@@ -1,5 +1,5 @@
 import {
-	BYPASS_ROLES,
+	BYPASS_ROLE_IDS,
 	CHANNEL_ID,
 	GUILD_ID,
 	RANDOM_IMAGE_API,
@@ -56,7 +56,7 @@ export const client = new GatewayClient({
 				thread.guild_id,
 				thread.owner_id,
 			);
-			if (member.roles.some((role) => BYPASS_ROLES.includes(role))) {
+			if (member.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
 				return deletePendingCollab(thread.id);
 			}
 
@@ -108,7 +108,7 @@ export const client = new GatewayClient({
 			if (reaction.guild_id !== GUILD_ID) return;
 
 			// Check if it's a valid collab thread first message
-			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			const pending_collab = getCachedPendingCollab(reaction.message_id);
 			if (!pending_collab) return;
 
 			// Only take account of star reactions
@@ -162,7 +162,7 @@ export const client = new GatewayClient({
 			if (!count || count < STARS_NEEDED) return;
 
 			// If the collab reached the stars needed, delete it from the database and unlock the thread
-			deletePendingCollab(reaction.message_id);
+			await deletePendingCollab(reaction.message_id);
 			await client.rest.editChannel(pending_collab.id, {
 				name: pending_collab.name,
 				archived: false,
@@ -174,7 +174,7 @@ export const client = new GatewayClient({
 			if (reaction.guild_id !== GUILD_ID) return;
 
 			// Check if it's a valid collab thread first message
-			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			const pending_collab = getCachedPendingCollab(reaction.message_id);
 			if (!pending_collab) return;
 
 			// Only take account of star reactions
@@ -193,7 +193,7 @@ export const client = new GatewayClient({
 			if (reaction.guild_id !== GUILD_ID) return;
 
 			// Check if it's a valid collab thread first message
-			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			const pending_collab = getCachedPendingCollab(reaction.message_id);
 			if (!pending_collab) return;
 
 			// Only take account of star reactions
@@ -208,7 +208,7 @@ export const client = new GatewayClient({
 			if (reaction.guild_id !== GUILD_ID) return;
 
 			// Check if it's a valid collab thread first message
-			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			const pending_collab = getCachedPendingCollab(reaction.message_id);
 			if (!pending_collab) return;
 
 			// Reset counter

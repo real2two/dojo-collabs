@@ -61,7 +61,7 @@ export async function getExpiredPendingCollabs(voting_period_time: number) {
  * Get a pending collab
  * @param id The message ID of the first thread message
  */
-export async function getCachedPendingCollab(id: string) {
+export function getCachedPendingCollab(id: string) {
 	const pending_collab = pending_collabs_cache.get(id);
 	if (!pending_collab) return null;
 	return {

@@ -13,7 +13,7 @@ export const VOTING_PERIOD_TIME = Number.parseInt(
 	process.env.VOTING_PERIOD_TIME,
 );
 export const RANDOM_IMAGE_API = process.env.RANDOM_IMAGE_API;
-export const BYPASS_ROLES = process.env.BYPASS_ROLES.split(",");
+export const BYPASS_ROLE_IDS = process.env.BYPASS_ROLE_IDS.split(",");
 
 export const DATABASE_HOST = process.env.DATABASE_HOST;
 export const DATABASE_PORT = Number.parseInt(process.env.DATABASE_PORT);
@@ -33,7 +33,7 @@ declare global {
 			STARS_NEEDED: string;
 			VOTING_PERIOD_TIME: string;
 			RANDOM_IMAGE_API: string;
-			BYPASS_ROLES: string;
+			BYPASS_ROLE_IDS: string;
 			DATABASE_HOST: string;
 			DATABASE_PORT: string;
 			DATABASE_USER: string;
