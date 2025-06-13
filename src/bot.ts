@@ -1,0 +1,221 @@
+import {
+	BYPASS_ROLES,
+	CHANNEL_ID,
+	GUILD_ID,
+	RANDOM_IMAGE_API,
+	STARS_NEEDED,
+	TOKEN,
+	USER_COOLDOWN_ROLE_ID,
+	VOTING_PERIOD_TIME,
+} from "$env";
+import { DiscordReactionType, Intents } from "@discordeno/bot";
+import { createReactionsCache, getStarReactionsCache } from "./cache";
+import { GatewayClient, ListenerEvent } from "./lib/bot";
+import {
+	createPendingCollab,
+	deletePendingCollab,
+	getCachedPendingCollab,
+	removeUserCollabCooldown,
+	setUserCollabCooldown,
+} from "./lib/functions";
+import { ellipsisText, generateRandom, timestamp } from "./utils";
+
+export const client = new GatewayClient({
+	token: TOKEN,
+	intents:
+		Intents.Guilds | Intents.GuildMembers | Intents.GuildMessageReactions,
+
+	events: {
+		[ListenerEvent.Ready]: () => console.info("Bot is ready"),
+		[ListenerEvent.GuildMemberUpdate]: async (member) => {
+			// Check if the user doesn't have the cooldown role ID
+			if (member.roles.includes(USER_COOLDOWN_ROLE_ID)) return;
+
+			// Assume the user had the role and remove cooldown timer from the database
+			await removeUserCollabCooldown(member.user.id);
+		},
+		[ListenerEvent.ThreadCreate]: async (thread) => {
+			// Check if it's from the collabs thread channel and if it's a newly created thread
+			if (
+				thread.guild_id !== GUILD_ID ||
+				thread.parent_id !== CHANNEL_ID ||
+				!thread.newly_created ||
+				!thread.owner_id
+			)
+				return;
+
+			// Store in a database the newly created collab thread
+			await createPendingCollab({
+				id: thread.id,
+				name: thread.name,
+				user_id: thread.owner_id,
+			});
+
+			// Get the member and check if they can bypass the reaction restriction
+			const member = await client.rest.getMember(
+				thread.guild_id,
+				thread.owner_id,
+			);
+			if (member.roles.some((role) => BYPASS_ROLES.includes(role))) {
+				return deletePendingCollab(thread.id);
+			}
+
+			// Using Promise.all() to speed things up a bit (hopefully this doesn't get the bot rate limited)
+			await Promise.all([
+				// Lock the thread
+				client.rest.editChannel(thread.id, {
+					name: ellipsisText(`(REVIEW) ${thread.name}`, 100),
+					archived: true,
+					locked: true,
+				}),
+
+				// Add collab cooldown role
+				client.rest.addRole(
+					thread.guild_id,
+					thread.owner_id,
+					USER_COOLDOWN_ROLE_ID,
+				),
+
+				// Set collab cooldown timer
+				setUserCollabCooldown(thread.owner_id),
+			]);
+
+			// Send the message
+			await client.rest.sendMessage(thread.id, {
+				embeds: [
+					{
+						color: 0xfc0303,
+						description: `
+							# This collab is locked and under community review! React to this post if you like the idea of this collab!
+							## ${STARS_NEEDED} ⭐ needed for this collab to go live!
+							## Voting period ends ${timestamp(Date.now() + VOTING_PERIOD_TIME)}
+						`,
+						thumbnail: RANDOM_IMAGE_API
+							? {
+									// The point of the "r" is to pick choose a new image every time (in case the image gets cached)
+									url: `${RANDOM_IMAGE_API}?r=${generateRandom(32)}`,
+								}
+							: undefined,
+					},
+				],
+			});
+
+			// Leave the thread
+			await client.rest.leaveThread(thread.id);
+		},
+		[ListenerEvent.MessageReactionAdd]: async (reaction) => {
+			// Check if it's from the collabs thread channel and if it's a newly created thread
+			if (reaction.guild_id !== GUILD_ID) return;
+
+			// Check if it's a valid collab thread first message
+			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			if (!pending_collab) return;
+
+			// Only take account of star reactions
+			if (reaction.emoji.name !== "⭐") return;
+
+			// Remove brust star emojis (to prevent people from locking threads)
+			if (reaction.burst) {
+				return client.rest.deleteUserReaction(
+					reaction.channel_id,
+					reaction.message_id,
+					reaction.user_id,
+					"⭐",
+				);
+			}
+
+			// Get the amount of stars the channel has
+			let reactions_cache = getStarReactionsCache(reaction.message_id);
+			if (reactions_cache) {
+				// Since the reactions are already cached, all I need to do is add the new reaction to cache'
+				reactions_cache.add(reaction.user_id);
+			} else {
+				// Get message from Discord and cache the data
+
+				// WARNING: There's techinally a race condition here where if you quickly react then unreact,
+				// it might still count towards your vote after it fetches, but this is unlikely to happen.
+				// This also requires the bot to have needed to restart in the first place.
+
+				// This is to prevent another race condition where it fetches reactions multiple times.
+				// If it's trying to fetch the reactions of this message, it'll just add to
+				// the counter (starting from 0) in the top (before the "} else {").
+				reactions_cache = createReactionsCache(reaction.message_id);
+
+				// This is where it actually fetches the reactions
+				const reactions = await client.rest.getReactions(
+					pending_collab.id,
+					pending_collab.id,
+					"⭐",
+					{ type: DiscordReactionType.Normal, limit: STARS_NEEDED },
+				);
+				if (!reactions)
+					throw new Error("Failed to find reactions in MessageReactionAdd");
+
+				// Add unstored user reactions to cache
+				for (const { id } of reactions) {
+					reactions_cache.add(id);
+				}
+			}
+
+			// Check if the collab thread has enough stars
+			const count = reactions_cache.size;
+			if (!count || count < STARS_NEEDED) return;
+
+			// If the collab reached the stars needed, delete it from the database and unlock the thread
+			deletePendingCollab(reaction.message_id);
+			await client.rest.editChannel(pending_collab.id, {
+				name: pending_collab.name,
+				archived: false,
+				locked: false,
+			});
+		},
+		[ListenerEvent.MessageReactionRemove]: async (reaction) => {
+			// Check if it's from the collabs thread channel and if it's a newly created thread
+			if (reaction.guild_id !== GUILD_ID) return;
+
+			// Check if it's a valid collab thread first message
+			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			if (!pending_collab) return;
+
+			// Only take account of star reactions
+			if (reaction.emoji.name !== "⭐" || reaction.burst) return;
+
+			// Remove user from the counter
+			// - Why only do minus 1 if it's cached?
+			// - Well, I'm never going to need to use the amount of stars a collab thread has, until someone adds a star.
+			// - I'll never need to use the star counter logic in remove stars
+			//   and the add star logic will fetch the reactions in the message.
+			const reactions_cache = getStarReactionsCache(reaction.message_id);
+			reactions_cache?.delete(reaction.user_id);
+		},
+		[ListenerEvent.MessageReactionRemoveEmoji]: async (reaction) => {
+			// Check if it's from the collabs thread channel and if it's a newly created thread
+			if (reaction.guild_id !== GUILD_ID) return;
+
+			// Check if it's a valid collab thread first message
+			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			if (!pending_collab) return;
+
+			// Only take account of star reactions
+			if (reaction.emoji.name !== "⭐") return;
+
+			// Reset counter
+			const reactions_cache = getStarReactionsCache(reaction.message_id);
+			reactions_cache?.clear();
+		},
+		[ListenerEvent.MessageReactionRemoveAll]: async (reaction) => {
+			// Check if it's from the collabs thread channel and if it's a newly created thread
+			if (reaction.guild_id !== GUILD_ID) return;
+
+			// Check if it's a valid collab thread first message
+			const pending_collab = await getCachedPendingCollab(reaction.message_id);
+			if (!pending_collab) return;
+
+			// Reset counter
+			const reactions_cache = getStarReactionsCache(reaction.message_id);
+			reactions_cache?.clear();
+		},
+	},
+});
+
+await client.start();

@@ -1,0 +1,169 @@
+// Taken and forked from carbon
+// https://github.com/buape/carbon/blob/7681111d077974756240a64a7d11df95b3bd360a/packages/carbon/src/types/listeners.ts#L108
+
+import {
+	type APIWebhookEventApplicationAuthorizedData,
+	type APIWebhookEventEntitlementCreateData,
+	type APIWebhookEventQuestUserEnrollmentData,
+	ApplicationWebhookEventType,
+	type GatewayApplicationCommandPermissionsUpdateDispatchData,
+	type GatewayAutoModerationActionExecutionDispatchData,
+	type GatewayAutoModerationRuleCreateDispatchData,
+	type GatewayAutoModerationRuleDeleteDispatchData,
+	type GatewayAutoModerationRuleUpdateDispatchData,
+	type GatewayChannelCreateDispatchData,
+	type GatewayChannelDeleteDispatchData,
+	type GatewayChannelPinsUpdateDispatchData,
+	type GatewayChannelUpdateDispatchData,
+	GatewayDispatchEvents,
+	type GatewayEntitlementDeleteDispatchData,
+	type GatewayEntitlementUpdateDispatchData,
+	type GatewayGuildAuditLogEntryCreateDispatchData,
+	type GatewayGuildBanAddDispatchData,
+	type GatewayGuildBanRemoveDispatchData,
+	type GatewayGuildCreateDispatchData,
+	type GatewayGuildDeleteDispatchData,
+	type GatewayGuildEmojisUpdateDispatchData,
+	type GatewayGuildIntegrationsUpdateDispatchData,
+	type GatewayGuildMemberAddDispatchData,
+	type GatewayGuildMemberRemoveDispatchData,
+	type GatewayGuildMemberUpdateDispatchData,
+	type GatewayGuildMembersChunkDispatchData,
+	type GatewayGuildRoleCreateDispatchData,
+	type GatewayGuildRoleDeleteDispatchData,
+	type GatewayGuildRoleUpdateDispatchData,
+	type GatewayGuildScheduledEventCreateDispatchData,
+	type GatewayGuildScheduledEventDeleteDispatchData,
+	type GatewayGuildScheduledEventUpdateDispatchData,
+	type GatewayGuildScheduledEventUserAddDispatchData,
+	type GatewayGuildScheduledEventUserRemoveDispatchData,
+	type GatewayGuildSoundboardSoundCreateDispatchData,
+	type GatewayGuildSoundboardSoundDeleteDispatchData,
+	type GatewayGuildSoundboardSoundUpdateDispatchData,
+	type GatewayGuildSoundboardSoundsUpdateDispatchData,
+	type GatewayGuildStickersUpdateDispatchData,
+	type GatewayGuildUpdateDispatchData,
+	type GatewayIntegrationCreateDispatchData,
+	type GatewayIntegrationDeleteDispatchData,
+	type GatewayIntegrationUpdateDispatchData,
+	type GatewayInteractionCreateDispatchData,
+	type GatewayInviteCreateDispatchData,
+	type GatewayInviteDeleteDispatchData,
+	type GatewayMessageCreateDispatchData,
+	type GatewayMessageDeleteBulkDispatchData,
+	type GatewayMessageDeleteDispatchData,
+	type GatewayMessagePollVoteDispatchData,
+	type GatewayMessageReactionAddDispatchData,
+	type GatewayMessageReactionRemoveAllDispatchData,
+	type GatewayMessageReactionRemoveDispatchData,
+	type GatewayMessageReactionRemoveEmojiDispatchData,
+	type GatewayMessageUpdateDispatchData,
+	type GatewayPresenceUpdateDispatchData,
+	type GatewayReadyDispatchData,
+	type GatewayResumedDispatch,
+	type GatewayStageInstanceCreateDispatchData,
+	type GatewayStageInstanceDeleteDispatchData,
+	type GatewayStageInstanceUpdateDispatchData,
+	type GatewaySubscriptionCreateDispatchData,
+	type GatewaySubscriptionDeleteDispatchData,
+	type GatewaySubscriptionUpdateDispatchData,
+	type GatewayThreadCreateDispatchData,
+	type GatewayThreadDeleteDispatchData,
+	type GatewayThreadListSyncDispatchData,
+	type GatewayThreadMemberUpdateDispatchData,
+	type GatewayThreadMembersUpdateDispatchData,
+	type GatewayThreadUpdateDispatchData,
+	type GatewayTypingStartDispatchData,
+	type GatewayUserUpdateDispatchData,
+	type GatewayVoiceChannelEffectSendDispatchData,
+	type GatewayVoiceServerUpdateDispatchData,
+	type GatewayVoiceStateUpdateDispatchData,
+	type GatewayWebhooksUpdateDispatchData,
+} from "discord-api-types/v10";
+
+export const ListenerEvent = {
+	...GatewayDispatchEvents,
+	...ApplicationWebhookEventType,
+};
+
+export type ListenerEventType = keyof ListenerEventData;
+
+export type ListenerEventData = {
+	[ListenerEvent.ApplicationAuthorized]: APIWebhookEventApplicationAuthorizedData;
+	[ListenerEvent.EntitlementCreate]: APIWebhookEventEntitlementCreateData;
+	[ListenerEvent.QuestUserEnrollment]: APIWebhookEventQuestUserEnrollmentData;
+	[ListenerEvent.ApplicationCommandPermissionsUpdate]: GatewayApplicationCommandPermissionsUpdateDispatchData;
+	[ListenerEvent.AutoModerationActionExecution]: GatewayAutoModerationActionExecutionDispatchData;
+	[ListenerEvent.AutoModerationRuleCreate]: GatewayAutoModerationRuleCreateDispatchData;
+	[ListenerEvent.AutoModerationRuleDelete]: GatewayAutoModerationRuleDeleteDispatchData;
+	[ListenerEvent.AutoModerationRuleUpdate]: GatewayAutoModerationRuleUpdateDispatchData;
+	[ListenerEvent.ChannelCreate]: GatewayChannelCreateDispatchData;
+	[ListenerEvent.ChannelDelete]: GatewayChannelDeleteDispatchData;
+	[ListenerEvent.ChannelPinsUpdate]: GatewayChannelPinsUpdateDispatchData;
+	[ListenerEvent.ChannelUpdate]: GatewayChannelUpdateDispatchData;
+	[ListenerEvent.EntitlementDelete]: GatewayEntitlementDeleteDispatchData;
+	[ListenerEvent.EntitlementUpdate]: GatewayEntitlementUpdateDispatchData;
+	[ListenerEvent.GuildAuditLogEntryCreate]: GatewayGuildAuditLogEntryCreateDispatchData;
+	[ListenerEvent.GuildBanAdd]: GatewayGuildBanAddDispatchData;
+	[ListenerEvent.GuildBanRemove]: GatewayGuildBanRemoveDispatchData;
+	[ListenerEvent.GuildCreate]: GatewayGuildCreateDispatchData;
+	[ListenerEvent.GuildDelete]: GatewayGuildDeleteDispatchData;
+	[ListenerEvent.GuildEmojisUpdate]: GatewayGuildEmojisUpdateDispatchData;
+	[ListenerEvent.GuildIntegrationsUpdate]: GatewayGuildIntegrationsUpdateDispatchData;
+	[ListenerEvent.GuildMemberAdd]: GatewayGuildMemberAddDispatchData;
+	[ListenerEvent.GuildMemberRemove]: GatewayGuildMemberRemoveDispatchData;
+	[ListenerEvent.GuildMemberUpdate]: GatewayGuildMemberUpdateDispatchData;
+	[ListenerEvent.GuildMembersChunk]: GatewayGuildMembersChunkDispatchData;
+	[ListenerEvent.GuildRoleCreate]: GatewayGuildRoleCreateDispatchData;
+	[ListenerEvent.GuildRoleDelete]: GatewayGuildRoleDeleteDispatchData;
+	[ListenerEvent.GuildRoleUpdate]: GatewayGuildRoleUpdateDispatchData;
+	[ListenerEvent.GuildScheduledEventCreate]: GatewayGuildScheduledEventCreateDispatchData;
+	[ListenerEvent.GuildScheduledEventDelete]: GatewayGuildScheduledEventDeleteDispatchData;
+	[ListenerEvent.GuildScheduledEventUpdate]: GatewayGuildScheduledEventUpdateDispatchData;
+	[ListenerEvent.GuildScheduledEventUserAdd]: GatewayGuildScheduledEventUserAddDispatchData;
+	[ListenerEvent.GuildScheduledEventUserRemove]: GatewayGuildScheduledEventUserRemoveDispatchData;
+	[ListenerEvent.GuildSoundboardSoundCreate]: GatewayGuildSoundboardSoundCreateDispatchData;
+	[ListenerEvent.GuildSoundboardSoundDelete]: GatewayGuildSoundboardSoundDeleteDispatchData;
+	[ListenerEvent.GuildSoundboardSoundUpdate]: GatewayGuildSoundboardSoundUpdateDispatchData;
+	[ListenerEvent.GuildSoundboardSoundsUpdate]: GatewayGuildSoundboardSoundsUpdateDispatchData;
+	[ListenerEvent.SoundboardSounds]: GatewayGuildSoundboardSoundsUpdateDispatchData;
+	[ListenerEvent.GuildStickersUpdate]: GatewayGuildStickersUpdateDispatchData;
+	[ListenerEvent.GuildUpdate]: GatewayGuildUpdateDispatchData;
+	[ListenerEvent.IntegrationCreate]: GatewayIntegrationCreateDispatchData;
+	[ListenerEvent.IntegrationDelete]: GatewayIntegrationDeleteDispatchData;
+	[ListenerEvent.IntegrationUpdate]: GatewayIntegrationUpdateDispatchData;
+	[ListenerEvent.InteractionCreate]: GatewayInteractionCreateDispatchData;
+	[ListenerEvent.InviteCreate]: GatewayInviteCreateDispatchData;
+	[ListenerEvent.InviteDelete]: GatewayInviteDeleteDispatchData;
+	[ListenerEvent.MessageCreate]: GatewayMessageCreateDispatchData;
+	[ListenerEvent.MessageDelete]: GatewayMessageDeleteDispatchData;
+	[ListenerEvent.MessageDeleteBulk]: GatewayMessageDeleteBulkDispatchData;
+	[ListenerEvent.MessageReactionAdd]: GatewayMessageReactionAddDispatchData;
+	[ListenerEvent.MessageReactionRemove]: GatewayMessageReactionRemoveDispatchData;
+	[ListenerEvent.MessageReactionRemoveAll]: GatewayMessageReactionRemoveAllDispatchData;
+	[ListenerEvent.MessageReactionRemoveEmoji]: GatewayMessageReactionRemoveEmojiDispatchData;
+	[ListenerEvent.MessageUpdate]: GatewayMessageUpdateDispatchData;
+	[ListenerEvent.PresenceUpdate]: GatewayPresenceUpdateDispatchData;
+	[ListenerEvent.Ready]: GatewayReadyDispatchData;
+	[ListenerEvent.Resumed]: GatewayResumedDispatch["d"];
+	[ListenerEvent.StageInstanceCreate]: GatewayStageInstanceCreateDispatchData;
+	[ListenerEvent.StageInstanceDelete]: GatewayStageInstanceDeleteDispatchData;
+	[ListenerEvent.StageInstanceUpdate]: GatewayStageInstanceUpdateDispatchData;
+	[ListenerEvent.SubscriptionCreate]: GatewaySubscriptionCreateDispatchData;
+	[ListenerEvent.SubscriptionDelete]: GatewaySubscriptionDeleteDispatchData;
+	[ListenerEvent.SubscriptionUpdate]: GatewaySubscriptionUpdateDispatchData;
+	[ListenerEvent.ThreadCreate]: GatewayThreadCreateDispatchData;
+	[ListenerEvent.ThreadDelete]: GatewayThreadDeleteDispatchData;
+	[ListenerEvent.ThreadListSync]: GatewayThreadListSyncDispatchData;
+	[ListenerEvent.ThreadMemberUpdate]: GatewayThreadMemberUpdateDispatchData;
+	[ListenerEvent.ThreadMembersUpdate]: GatewayThreadMembersUpdateDispatchData;
+	[ListenerEvent.ThreadUpdate]: GatewayThreadUpdateDispatchData;
+	[ListenerEvent.TypingStart]: GatewayTypingStartDispatchData;
+	[ListenerEvent.UserUpdate]: GatewayUserUpdateDispatchData;
+	[ListenerEvent.VoiceServerUpdate]: GatewayVoiceServerUpdateDispatchData;
+	[ListenerEvent.VoiceStateUpdate]: GatewayVoiceStateUpdateDispatchData;
+	[ListenerEvent.WebhooksUpdate]: GatewayWebhooksUpdateDispatchData;
+	[ListenerEvent.MessagePollVoteAdd]: GatewayMessagePollVoteDispatchData;
+	[ListenerEvent.MessagePollVoteRemove]: GatewayMessagePollVoteDispatchData;
+	[ListenerEvent.VoiceChannelEffectSend]: GatewayVoiceChannelEffectSendDispatchData;
+};
