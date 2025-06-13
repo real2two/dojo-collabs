@@ -93,7 +93,7 @@ export const client = new GatewayClient({
 						thumbnail: RANDOM_IMAGE_API
 							? {
 									// The point of the "r" is to pick choose a new image every time (in case the image gets cached)
-									url: `${RANDOM_IMAGE_API}?r=${generateRandom(32)}`,
+									url: `${RANDOM_IMAGE_API}?r=${Date.now()}`,
 								}
 							: undefined,
 					},
