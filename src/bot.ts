@@ -18,7 +18,7 @@ import {
 	removeUserCollabCooldown,
 	setUserCollabCooldown,
 } from "./lib/functions";
-import { ellipsisText, generateRandom, timestamp } from "./utils";
+import { ellipsisText, timestamp } from "./utils";
 
 export const client = new GatewayClient({
 	token: TOKEN,
