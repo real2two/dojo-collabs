@@ -9,7 +9,11 @@ import {
 	VOTING_PERIOD_TIME,
 } from "$env";
 import { DiscordReactionType, Intents } from "@discordeno/bot";
-import { createReactionsCache, getStarReactionsCache } from "./cache";
+import {
+	createReactionsCache,
+	deleteStarReactionsCache,
+	getStarReactionsCache,
+} from "./cache";
 import { GatewayClient, ListenerEvent } from "./lib/bot";
 import {
 	createPendingCollab,
@@ -102,6 +106,11 @@ export const client = new GatewayClient({
 
 			// Leave the thread
 			await client.rest.leaveThread(thread.id);
+		},
+		[ListenerEvent.ThreadDelete]: async (thread) => {
+			// Delete the pending collab from the database
+			await deletePendingCollab(thread.id);
+			deleteStarReactionsCache(thread.id);
 		},
 		[ListenerEvent.MessageReactionAdd]: async (reaction) => {
 			// Check if it's from the collabs thread channel and if it's a newly created thread
