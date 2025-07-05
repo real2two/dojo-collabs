@@ -84,8 +84,8 @@ export const client = new GatewayClient({
 								## Check it out here! <#${thread.id}>
 							`,
 							thumbnail: {
-								url: member.avatar
-									? `https://cdn.discordapp.com/avatars/${thread.owner_id}/${member.avatar}`
+								url: member.user.avatar
+									? `https://cdn.discordapp.com/avatars/${thread.owner_id}/${member.user.avatar}`
 									: `https://cdn.discordapp.com/embed/avatars/${(BigInt(thread.owner_id) >> 22n) % 6n}`,
 							},
 							image: original_message?.attachments?.[0]?.proxyUrl
@@ -251,8 +251,8 @@ export const client = new GatewayClient({
 							## Check it out here! <#${pending_collab.id}>
 						`,
 						thumbnail: {
-							url: host_user?.avatar
-								? `https://cdn.discordapp.com/avatars/${pending_collab.user_id}/${host_user.avatar}`
+							url: host_user?.user.avatar
+								? `https://cdn.discordapp.com/avatars/${pending_collab.user_id}/${host_user.user.avatar}`
 								: `https://cdn.discordapp.com/embed/avatars/${(BigInt(pending_collab.user_id) >> 22n) % 6n}`,
 						},
 						image: original_message?.attachments?.[0]?.proxyUrl
