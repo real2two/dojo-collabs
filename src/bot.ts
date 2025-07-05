@@ -68,7 +68,33 @@ export const client = new GatewayClient({
 			);
 			if (member.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
 				await finished_creating_pending_collab;
-				return deletePendingCollab(thread.id);
+				deletePendingCollab(thread.id);
+				
+				const original_message = await client.rest.getMessage(
+					thread.id,
+					thread.id,
+				);
+				await client.rest.sendMessage(ANNOUNCE_CHANNEL_ID, {
+					content: `<@&${ANNOUNCE_ROLE_ID}>`,
+					embeds: [
+						{
+							color: 0xfc0303,
+							description: `
+								# ${thread.name} hosted by <@${thread.owner_id}> is now taking entries!
+								## Check it out here! ${thread.name}
+							`,
+							thumbnail: {
+								url: member.avatar
+									? `https://cdn.discordapp.com/avatars/${thread.owner_id}/${member.avatar}`
+									: `https://cdn.discordapp.com/embed/avatars/${(BigInt(thread.owner_id) >> 22n) % 6n}`,
+							},
+							image: original_message?.attachments?.[0]?.proxyUrl
+								? { url: original_message.attachments[0].proxyUrl }
+								: undefined,
+						},
+					],
+				});
+				return;
 			}
 
 			// Using Promise.all() to speed things up a bit (hopefully this doesn't get the bot rate limited)
