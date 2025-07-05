@@ -81,7 +81,7 @@ export const client = new GatewayClient({
 							color: 0xfc0303,
 							description: `
 								# ${thread.name} hosted by <@${thread.owner_id}> is now taking entries!
-								## Check it out here! ${thread.name}
+								## Check it out here! <#${thread.id}>
 							`,
 							thumbnail: {
 								url: member.avatar
@@ -248,7 +248,7 @@ export const client = new GatewayClient({
 						color: 0xfc0303,
 						description: `
 							# ${pending_collab.name} hosted by <@${pending_collab.user_id}> is now taking entries!
-							## Check it out here! ${pending_collab.name}
+							## Check it out here! <#${pending_collab.id}>
 						`,
 						thumbnail: {
 							url: host_user?.avatar
