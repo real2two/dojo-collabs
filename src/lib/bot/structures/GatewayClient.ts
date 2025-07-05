@@ -55,7 +55,7 @@ export class GatewayClient {
 
 			try {
 				// @ts-ignore Run the function and send over the data
-				this.events[data.t]?.(data.d, shard);
+				await this.events[data.t]?.(data.d, shard);
 			} catch (err) {
 				console.error(err);
 			}
