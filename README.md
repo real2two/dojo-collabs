@@ -24,6 +24,10 @@ This project was created using `bun init` in bun v1.2.16. [Bun](https://bun.sh) 
 
 Here are additional notes I wrote for myself:
 
+### TODO
+
+- Give the collab cooldown role if the user left and joined back the server.
+
 ### Main comments
 
 - I used [`DrizzleORM`](https://orm.drizzle.team/) _(ORM)_ + [`PostgreSQL`](https://www.postgresql.org/) _(database)_ for this project. You can use the script `bun schema/push` _(to forcefully push data, FOR TESTING ONLY - DO NOT USE IN PRODUCTION)_ and `bun schema/generate` _(to generate new schemas you can use for `bun schema/migrate`)_ as well.
