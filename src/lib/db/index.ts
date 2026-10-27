@@ -1,2 +1,2 @@
-export * from "./pool";
+export * from "./client";
 export * from "./schema";

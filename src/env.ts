@@ -18,12 +18,7 @@ export const BYPASS_ROLE_IDS = process.env.BYPASS_ROLE_IDS.split(",");
 export const ANNOUNCE_ROLE_ID = process.env.ANNOUNCE_ROLE_ID;
 export const ANNOUNCE_CHANNEL_ID = process.env.ANNOUNCE_CHANNEL_ID;
 
-export const DATABASE_HOST = process.env.DATABASE_HOST;
-export const DATABASE_PORT = Number.parseInt(process.env.DATABASE_PORT);
-export const DATABASE_USER = process.env.DATABASE_USER;
-export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD;
-export const DATABASE_NAME = process.env.DATABASE_NAME;
-export const DATABASE_SSL = process.env.DATABASE_SSL?.toLowerCase() === "true";
+export const DATABASE_URL = process.env.DATABASE_URL ?? "./data.db";
 
 declare global {
 	namespace NodeJS {
@@ -39,12 +34,7 @@ declare global {
 			BYPASS_ROLE_IDS: string;
 			ANNOUNCE_ROLE_ID: string;
 			ANNOUNCE_CHANNEL_ID: string;
-			DATABASE_HOST: string;
-			DATABASE_PORT: string;
-			DATABASE_USER: string;
-			DATABASE_PASSWORD: string;
-			DATABASE_NAME: string;
-			DATABASE_SSL: string;
+			DATABASE_URL: string;
 		}
 	}
 }
