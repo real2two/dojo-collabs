@@ -11,6 +11,12 @@ importers:
       '@discordeno/bot':
         specifier: ^21.0.0
         version: 21.0.0
+      '@discordeno/gateway':
+        specifier: ^21.0.0
+        version: 21.0.0
+      '@discordeno/rest':
+        specifier: ^21.0.0
+        version: 21.0.0
       better-sqlite3:
         specifier: ^12.2.0
         version: 12.11.1
@@ -20,6 +26,9 @@ importers:
       discord-api-types:
         specifier: ^0.38.11
         version: 0.38.57
+      dotenv:
+        specifier: ^17.0.0
+        version: 17.4.2
       drizzle-orm:
         specifier: ^0.44.2
         version: 0.44.7(@types/better-sqlite3@7.6.13)(better-sqlite3@12.11.1)
@@ -809,6 +818,10 @@ packages:
   discord-api-types@0.38.57:
     resolution: {integrity: sha512-R1CTSSt4RshqCq23j2Xq2ZscvzB4LzG9OB1CYQdKUGdw8Ti/oF/72EEtK2mNpagG/Vj9NcBT7dw9lKLf+Dacfg==}
 
+  dotenv@17.4.2:
+    resolution: {integrity: sha512-nI4U3TottKAcAD9LLud4Cb7b2QztQMUEfHbvhTH09bqXTxnSie8WnjPALV/WMCrJZ6UV/qHJ6L03OqO3LcdYZw==}
+    engines: {node: '>=12'}
+
   drizzle-kit@0.31.11:
     resolution: {integrity: sha512-YCYqxTLIB2OCqf6w9/Vef13baBVbwQIPcbT4Y56AfO6B9ajZhDhD8Jkveg/hJvT/iuMloKD/IYYkyMMNhr7Kqg==}
     hasBin: true
@@ -1525,6 +1538,8 @@ snapshots:
   detect-libc@2.1.2: {}
 
   discord-api-types@0.38.57: {}
+
+  dotenv@17.4.2: {}
 
   drizzle-kit@0.31.11:
     dependencies:

@@ -1,15 +1,24 @@
 {
 	"name": "gateway",
-	"type": "module",
 	"private": true,
+	"type": "module",
 	"scripts": {
-		"start": "tsx src/index.ts",
-		"dev": "tsx watch src/index.ts",
+		"start": "tsx --env-file=.env src/index.ts",
+		"dev": "tsx watch --env-file=.env src/index.ts",
 		"format": "oxfmt --write .",
 		"lint": "oxlint --fix .",
 		"schema/push": "drizzle-kit push",
 		"schema/generate": "drizzle-kit generate",
 		"schema/migrate": "drizzle-kit migrate"
+	},
+	"dependencies": {
+		"@discordeno/bot": "^21.0.0",
+		"@discordeno/gateway": "^21.0.0",
+		"@discordeno/rest": "^21.0.0",
+		"better-sqlite3": "^12.2.0",
+		"cron-schedule": "^5.0.4",
+		"discord-api-types": "^0.38.11",
+		"drizzle-orm": "^0.44.2"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^7.6.13",
@@ -19,12 +28,5 @@
 		"oxlint": "^1.90.0",
 		"tsx": "^4.20.0",
 		"typescript": "^5.8.3"
-	},
-	"dependencies": {
-		"@discordeno/bot": "^21.0.0",
-		"better-sqlite3": "^12.2.0",
-		"cron-schedule": "^5.0.4",
-		"discord-api-types": "^0.38.11",
-		"drizzle-orm": "^0.44.2"
 	}
 }

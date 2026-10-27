@@ -3,22 +3,28 @@
 To install dependencies:
 
 ```bash
-bun install
+pnpm install
 ```
+
+Copy `.env.example` to `.env` and fill in your values.
 
 To run:
 
 ```bash
-bun start
+pnpm start
+```
+
+To run in development (watch mode):
+
+```bash
+pnpm dev
 ```
 
 To migrate database:
 
 ```bash
-bun schema/migrate
+pnpm schema/migrate
 ```
-
-This project was created using `bun init` in bun v1.2.16. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
 
 ## Notes / Warnings
 
@@ -30,8 +36,9 @@ Here are additional notes I wrote for myself:
 
 ### Main comments
 
-- I used [`DrizzleORM`](https://orm.drizzle.team/) _(ORM)_ + [`PostgreSQL`](https://www.postgresql.org/) _(database)_ for this project. You can use the script `bun schema/push` _(to forcefully push data, FOR TESTING ONLY - DO NOT USE IN PRODUCTION)_ and `bun schema/generate` _(to generate new schemas you can use for `bun schema/migrate`)_ as well.
+- I used [`DrizzleORM`](https://orm.drizzle.team/) _(ORM)_ + [`SQLite`](https://www.sqlite.org/) _(database)_ for this project. The database file is configured with `DATABASE_URL` in `.env`. You can use the script `pnpm schema/push` _(to forcefully push data, FOR TESTING ONLY - DO NOT USE IN PRODUCTION)_ and `pnpm schema/generate` _(to generate new schemas you can use for `pnpm schema/migrate`)_ as well.
 - I wrote my own gateway client class using some [`discordeno`](https://discordeno.js.org/) libraries, which I really shouldn't have done. This was really for fun and toying around with things. It shouldn't be hard to move to another bot library.
+- Linting and formatting are handled with [oxc](https://oxc.rs/) via `pnpm lint` and `pnpm format`.
 
 ### "WARNING:" comments
 
