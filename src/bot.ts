@@ -78,22 +78,36 @@ export const client = new GatewayClient({
 			)
 				return;
 
-			// Store in a database the newly created collab thread
-			const finished_creating_pending_collab = createPendingCollab({
-				id: thread.id,
-				name: thread.name,
-				user_id: thread.owner_id,
-			});
-
 			// Get the member and check if they can bypass the reaction restriction
 			const member = await client.rest.getMember(
 				thread.guild_id,
 				thread.owner_id,
 			);
-			if (member?.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
-				await finished_creating_pending_collab;
-				deletePendingCollab(thread.id);
 
+			// If user has bypass role (ex. collaborator):
+			if (member?.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
+				// Give collab cooldown
+				await Promise.all([
+					client.rest.addRole(
+						thread.guild_id,
+						thread.owner_id,
+						USER_COOLDOWN_ROLE_ID,
+					),
+					setUserCollabCooldown(thread.owner_id),
+				]);
+
+				// Add the in-progress tag
+				const thread_channel = await client.rest.getChannel(thread.id);
+				const applied_tags = thread_channel?.appliedTags ?? [];
+				const updated_tags =
+					!applied_tags.includes(THREAD_TAG_ID) && applied_tags.length < 5
+						? [THREAD_TAG_ID, ...applied_tags]
+						: applied_tags;
+				await client.rest.editChannel(thread.id, {
+					appliedTags: updated_tags,
+				});
+
+				// Announce the collab
 				const original_message = await client.rest.getMessage(
 					thread.id,
 					thread.id,
@@ -123,6 +137,13 @@ export const client = new GatewayClient({
 				});
 				return;
 			}
+
+			// Store in a database the newly created collab thread
+			const finished_creating_pending_collab = createPendingCollab({
+				id: thread.id,
+				name: thread.name,
+				user_id: thread.owner_id,
+			});
 
 			// Using Promise.all() to speed things up a bit (hopefully this doesn't get the bot rate limited)
 			await Promise.all([
