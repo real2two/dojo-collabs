@@ -17,7 +17,7 @@ export function getDisplayAvatarUrl({
 		return `https://cdn.discordapp.com/guilds/${guildId}/users/${userId}/avatars/${guildAvatar}.png`;
 	}
 
-	// If use rhas user avatar:
+	// If user has user avatar:
 	if (userAvatar) {
 		return `https://cdn.discordapp.com/avatars/${userId}/${userAvatar}.png`;
 	}

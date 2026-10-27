@@ -121,7 +121,7 @@ export async function createPendingCollab({
 }
 
 /**
- * Create a pending collab
+ * Create a pending collab bot message
  * @param data The message ID of the first thread message and the user ID
  */
 export async function setPendingCollabBotMessage({
