@@ -2,8 +2,8 @@ import {
 	ANNOUNCE_CHANNEL_ID,
 	ANNOUNCE_ROLE_ID,
 	BYPASS_ROLE_IDS,
-	CHANNEL_ID,
 	GUILD_ID,
+	THREAD_CHANNEL_ID,
 	RANDOM_IMAGE_API,
 	STARS_NEEDED,
 	TOKEN,
@@ -48,7 +48,7 @@ export const client = new GatewayClient({
 			// Check if it's from the collabs thread channel and if it's a newly created thread
 			if (
 				thread.guild_id !== GUILD_ID ||
-				thread.parent_id !== CHANNEL_ID ||
+				thread.parent_id !== THREAD_CHANNEL_ID ||
 				!thread.newly_created ||
 				!thread.owner_id
 			)

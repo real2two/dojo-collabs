@@ -1,7 +1,7 @@
 export const TOKEN = process.env.TOKEN;
 
 export const GUILD_ID = process.env.GUILD_ID;
-export const CHANNEL_ID = process.env.CHANNEL_ID;
+export const THREAD_CHANNEL_ID = process.env.THREAD_CHANNEL_ID;
 
 export const USER_COOLDOWN_TIME = Number.parseInt(
 	process.env.USER_COOLDOWN_TIME,
@@ -25,7 +25,7 @@ declare global {
 		interface ProcessEnv {
 			TOKEN: string;
 			GUILD_ID: string;
-			CHANNEL_ID: string;
+			THREAD_CHANNEL_ID: string;
 			USER_COOLDOWN_TIME: string;
 			USER_COOLDOWN_ROLE_ID: string;
 			STARS_NEEDED: string;
