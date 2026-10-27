@@ -18,7 +18,8 @@
 		"better-sqlite3": "^13.0.3",
 		"cron-schedule": "^6.0.0",
 		"discord-api-types": "^0.38.57",
-		"drizzle-orm": "^0.45.4"
+		"drizzle-orm": "^0.45.4",
+		"tsx": "^4.23.15"
 	},
 	"devDependencies": {
 		"@types/better-sqlite3": "^9.6.0",
@@ -26,7 +27,6 @@
 		"drizzle-kit": "^0.31.11",
 		"oxfmt": "^0.74.0",
 		"oxlint": "^1.89.0",
-		"tsx": "^4.23.15",
 		"typescript": "^7.0.2"
 	}
 }

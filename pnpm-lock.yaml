@@ -29,6 +29,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.4
         version: 0.45.4(@types/better-sqlite3@9.6.0)(better-sqlite3@13.0.3)
+      tsx:
+        specifier: ^4.23.15
+        version: 4.23.15
     devDependencies:
       '@types/better-sqlite3':
         specifier: ^9.6.0
@@ -45,9 +48,6 @@ importers:
       oxlint:
         specifier: ^1.89.0
         version: 1.89.0
-      tsx:
-        specifier: ^4.23.15
-        version: 4.23.15
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
