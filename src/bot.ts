@@ -1,12 +1,10 @@
 import {
-	BYPASS_ROLE_IDS,
 	GUILD_ID,
 	THREAD_CHANNEL_ID,
 	STARS_NEEDED,
 	TOKEN,
 	USER_COOLDOWN_ROLE_ID,
 	USER_COOLDOWN_TIME,
-	VOTING_PERIOD_TIME,
 } from "~/env";
 import { DiscordReactionType, Intents } from "@discordeno/bot";
 import {
@@ -16,16 +14,13 @@ import {
 } from "./cache";
 import { GatewayClient, ListenerEvent, getDisplayAvatarUrl } from "./lib/bot";
 import {
-	createPendingCollab,
 	deletePendingCollab,
 	getCachedPendingCollab,
 	getUserCollabCooldown,
 	hasPendingCollab,
 	removeUserCollabCooldown,
-	setPendingCollabBotMessage,
-	setUserCollabCooldown,
 } from "./lib/functions";
-import { announceCollab, ellipsisText, timestamp, unlockCollab } from "./utils";
+import { announceCollab, createCollab, unlockCollab } from "./utils";
 
 export const client = new GatewayClient({
 	token: TOKEN,
@@ -75,98 +70,12 @@ export const client = new GatewayClient({
 			)
 				return;
 
-			// Get the member and check if they can bypass the reaction restriction
-			const member = await client.rest.getMember(GUILD_ID, thread.owner_id);
-
-			// If user has bypass role (ex. collaborator):
-			if (member?.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
-				// Give collab cooldown
-				await Promise.all([
-					client.rest.addRole(GUILD_ID, thread.owner_id, USER_COOLDOWN_ROLE_ID),
-					setUserCollabCooldown(thread.owner_id),
-				]);
-
-				// Add the in-progress tag
-				await unlockCollab(client.rest, thread.id, thread.name);
-
-				// Announce the collab
-				await announceCollab(client.rest, {
-					name: thread.name,
-					hostId: thread.owner_id,
-					threadId: thread.id,
-					avatarUrl: getDisplayAvatarUrl({
-						userId: thread.owner_id,
-						guildId: GUILD_ID,
-						guildAvatar: member?.avatar,
-						userAvatar: member?.user?.avatar,
-					}),
-				});
-				return;
-			}
-
-			// Store in a database the newly created collab thread
-			const finished_creating_pending_collab = createPendingCollab({
+			await createCollab(client.rest, {
 				id: thread.id,
 				name: thread.name,
-				user_id: thread.owner_id,
+				ownerId: thread.owner_id,
+				guildId: thread.guild_id,
 			});
-
-			// Using Promise.all() to speed things up a bit (hopefully this doesn't get the bot rate limited)
-			await Promise.all([
-				// Lock the thread
-				client.rest.editChannel(thread.id, {
-					name: ellipsisText(`(REVIEW) ${thread.name}`, 100),
-					archived: true,
-					locked: true,
-				}),
-
-				// Add collab cooldown role
-				client.rest.addRole(GUILD_ID, thread.owner_id, USER_COOLDOWN_ROLE_ID),
-
-				// Set collab cooldown timer
-				setUserCollabCooldown(thread.owner_id),
-			]);
-
-			// Send the message
-			const message = await client.rest.sendMessage(thread.id, {
-				embeds: [
-					{
-						color: 0xfc0303,
-						description: `
-							# This collab is locked and under community review! React to this post if you like the idea of this collab!
-							## ${STARS_NEEDED} ⭐ needed for this collab to go live!
-							## Voting period ends ${timestamp(Date.now() + VOTING_PERIOD_TIME)}
-						`,
-						thumbnail: {
-							url: getDisplayAvatarUrl({
-								userId: thread.owner_id,
-								guildId: GUILD_ID,
-								guildAvatar: member?.avatar,
-								userAvatar: member?.user?.avatar,
-							}),
-						},
-					},
-				],
-			});
-
-			// React star to thread
-			await client.rest.addReaction(thread.id, thread.id, "⭐");
-
-			// Leave the thread
-			await client.rest.leaveThread(thread.id);
-
-			// Save bot's message ID into the database
-			await finished_creating_pending_collab;
-			const saved_message_into_db = await setPendingCollabBotMessage({
-				id: thread.id,
-				bot_message_id: message.id,
-			});
-			if (!saved_message_into_db) {
-				// If it fails, delete the message ID
-				// This deletes the message in a race condition where you meet the
-				// star requirements before the bot even gets to saving this data.
-				await client.rest.deleteMessage(thread.id, message.id);
-			}
 		},
 		[ListenerEvent.ThreadDelete]: async (thread) => {
 			// Delete the pending collab from the database
