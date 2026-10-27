@@ -27,9 +27,8 @@
 		"noPropertyAccessFromIndexSignature": false,
 
 		// Paths
-		"baseUrl": "./src",
 		"paths": {
-			"$env": ["env.ts"]
+			"~/*": ["./src/*"]
 		}
 	}
 }

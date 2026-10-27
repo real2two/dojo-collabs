@@ -4,7 +4,7 @@ import {
 	USER_COOLDOWN_ROLE_ID,
 	USER_COOLDOWN_TIME,
 	VOTING_PERIOD_TIME,
-} from "$env";
+} from "~/env";
 import { DiscordReactionType } from "@discordeno/bot";
 import { parseCronExpression } from "cron-schedule";
 import { TimerBasedCronScheduler as scheduler } from "cron-schedule/schedulers/timer-based.js";

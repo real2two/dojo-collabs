@@ -7,7 +7,7 @@ import {
 	USER_COOLDOWN_ROLE_ID,
 	USER_COOLDOWN_TIME,
 	VOTING_PERIOD_TIME,
-} from "$env";
+} from "~/env";
 import { DiscordReactionType, Intents } from "@discordeno/bot";
 import {
 	createReactionsCache,

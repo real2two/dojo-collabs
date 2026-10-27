@@ -1,4 +1,4 @@
-import { ANNOUNCE_CHANNEL_ID, ANNOUNCE_ROLE_ID } from "$env";
+import { ANNOUNCE_CHANNEL_ID, ANNOUNCE_ROLE_ID } from "~/env";
 import type { RestManager } from "@discordeno/rest";
 
 /**

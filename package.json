@@ -15,18 +15,18 @@
 		"@discordeno/bot": "^21.0.0",
 		"@discordeno/gateway": "^21.0.0",
 		"@discordeno/rest": "^21.0.0",
-		"better-sqlite3": "^12.2.0",
-		"cron-schedule": "^5.0.4",
-		"discord-api-types": "^0.38.11",
-		"drizzle-orm": "^0.44.2"
+		"better-sqlite3": "^13.0.3",
+		"cron-schedule": "^6.0.0",
+		"discord-api-types": "^0.38.57",
+		"drizzle-orm": "^0.45.4"
 	},
 	"devDependencies": {
-		"@types/better-sqlite3": "^7.6.13",
-		"@types/node": "^24.0.0",
-		"drizzle-kit": "^0.31.1",
-		"oxfmt": "^0.75.0",
-		"oxlint": "^1.90.0",
-		"tsx": "^4.20.0",
-		"typescript": "^5.8.3"
+		"@types/better-sqlite3": "^9.6.0",
+		"@types/node": "^26.6.5",
+		"drizzle-kit": "^0.31.11",
+		"oxfmt": "^0.74.0",
+		"oxlint": "^1.89.0",
+		"tsx": "^4.23.15",
+		"typescript": "^7.0.2"
 	}
 }

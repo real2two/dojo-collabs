@@ -1,4 +1,4 @@
-import { THREAD_TAG_ID } from "$env";
+import { THREAD_TAG_ID } from "~/env";
 import type { RestManager } from "@discordeno/rest";
 
 /**
