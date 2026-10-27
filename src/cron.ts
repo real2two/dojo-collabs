@@ -9,7 +9,8 @@ import { DiscordReactionType } from "@discordeno/bot";
 import { parseCronExpression } from "cron-schedule";
 import { TimerBasedCronScheduler as scheduler } from "cron-schedule/schedulers/timer-based.js";
 import { client } from "./bot";
-import { unlockCollab } from "./utils";
+import { getDisplayAvatarUrl } from "./lib/bot";
+import { announceCollab, unlockCollab } from "./utils";
 import { deleteStarReactionsCache, getStarReactionsCache } from "./cache";
 import {
 	deletePendingCollab,
@@ -62,6 +63,31 @@ async function handleDeleting() {
 
 				// Unlock the thread and mark it as in progress
 				await unlockCollab(client.rest, pending_collab.id, pending_collab.name);
+
+				// Delete the bot's review message
+				if (pending_collab.bot_message_id) {
+					await client.rest.deleteMessage(
+						pending_collab.id,
+						pending_collab.bot_message_id,
+					);
+				}
+
+				// Send an announcement message
+				const host_user = await client.rest.getMember(
+					GUILD_ID,
+					pending_collab.user_id,
+				);
+				await announceCollab(client.rest, {
+					name: pending_collab.name,
+					hostId: pending_collab.user_id,
+					threadId: pending_collab.id,
+					avatarUrl: getDisplayAvatarUrl({
+						userId: pending_collab.user_id,
+						guildId: GUILD_ID,
+						guildAvatar: host_user?.avatar,
+						userAvatar: host_user?.user?.avatar,
+					}),
+				});
 				continue;
 			}
 		} else if (reactions_cache.size >= STARS_NEEDED) continue;

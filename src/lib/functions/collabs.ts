@@ -56,6 +56,7 @@ export async function getExpiredPendingCollabs(voting_period_time: number) {
 		id: c.id,
 		name: c.name,
 		user_id: c.user_id,
+		bot_message_id: c.bot_message_id,
 		created_at: c.created_at.getTime(),
 	}));
 }
