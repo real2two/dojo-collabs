@@ -17,3 +17,10 @@ export const collab_cooldown = sqliteTable("collab_cooldown", {
 		.notNull()
 		.default(sql`(unixepoch() * 1000)`),
 });
+
+export const last_collab_timestamp = sqliteTable("last_collab_timestamp", {
+	id: text("id").primaryKey(),
+	lastTimestamp: integer("last_timestamp", {
+		mode: "timestamp_ms",
+	}).notNull(),
+});
