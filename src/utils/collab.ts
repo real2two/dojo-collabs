@@ -32,6 +32,7 @@ export async function createCollab(
 		createdAt: number;
 	},
 ) {
+	// Handles creating collab
 	const member = await rest.getMember(thread.guildId, thread.ownerId);
 
 	if (member?.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
@@ -57,11 +58,12 @@ export async function createCollab(
 		});
 	} else {
 		// Store the pending collab
-		const finished_creating_pending_collab = createPendingCollab({
+		const createdCollab = await createPendingCollab({
 			id: thread.id,
 			name: thread.name,
 			user_id: thread.ownerId,
 		});
+		if (!createdCollab) return;
 
 		await Promise.all([
 			// Lock the thread
@@ -107,7 +109,6 @@ export async function createCollab(
 		await rest.leaveThread(thread.id);
 
 		// Save the bot's message ID into the database
-		await finished_creating_pending_collab;
 		const saved_message_into_db = await setPendingCollabBotMessage({
 			id: thread.id,
 			bot_message_id: message.id,

@@ -113,12 +113,16 @@ export async function createPendingCollab({
 	});
 
 	// Save in database
-	await db.insert(pending_collabs).values({
-		id,
-		name,
-		user_id,
-		created_at,
-	});
+	const result = await db
+		.insert(pending_collabs)
+		.values({
+			id,
+			name,
+			user_id,
+			created_at,
+		})
+		.onConflictDoNothing();
+	return result.changes > 0;
 }
 
 /**
