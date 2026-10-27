@@ -1,31 +1,30 @@
 {
 	"name": "gateway",
-	"module": "src/index.ts",
 	"type": "module",
 	"private": true,
 	"scripts": {
-		"start": "bun .",
-		"dev": "bun --watch .",
-		"format": "biome format --write ./",
-		"lint": "biome check --write ./",
+		"start": "tsx src/index.ts",
+		"dev": "tsx watch src/index.ts",
+		"format": "oxfmt --write .",
+		"lint": "oxlint --fix .",
 		"schema/push": "drizzle-kit push",
 		"schema/generate": "drizzle-kit generate",
 		"schema/migrate": "drizzle-kit migrate"
 	},
 	"devDependencies": {
-		"@types/bun": "latest",
-		"@types/pg": "^8.15.4"
-	},
-	"peerDependencies": {
+		"@types/better-sqlite3": "^7.6.13",
+		"@types/node": "^24.0.0",
+		"drizzle-kit": "^0.31.1",
+		"oxfmt": "^0.75.0",
+		"oxlint": "^1.90.0",
+		"tsx": "^4.20.0",
 		"typescript": "^5.8.3"
 	},
 	"dependencies": {
-		"@biomejs/biome": "^1.9.4",
 		"@discordeno/bot": "^21.0.0",
+		"better-sqlite3": "^12.2.0",
 		"cron-schedule": "^5.0.4",
 		"discord-api-types": "^0.38.11",
-		"drizzle-kit": "^0.31.1",
-		"drizzle-orm": "^0.44.2",
-		"pg": "^8.16.0"
+		"drizzle-orm": "^0.44.2"
 	}
 }
