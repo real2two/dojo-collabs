@@ -1,7 +1,6 @@
 import {
 	GUILD_ID,
 	STARS_NEEDED,
-	THREAD_TAG_ID,
 	USER_COOLDOWN_ROLE_ID,
 	USER_COOLDOWN_TIME,
 	VOTING_PERIOD_TIME,
@@ -10,6 +9,7 @@ import { DiscordReactionType } from "@discordeno/bot";
 import { parseCronExpression } from "cron-schedule";
 import { TimerBasedCronScheduler as scheduler } from "cron-schedule/schedulers/timer-based.js";
 import { client } from "./bot";
+import { unlockCollab } from "./utils";
 import { deleteStarReactionsCache, getStarReactionsCache } from "./cache";
 import {
 	deletePendingCollab,
@@ -60,21 +60,8 @@ async function handleDeleting() {
 			if (reactions && reactions.length >= STARS_NEEDED) {
 				await deletePendingCollab(pending_collab.id);
 
-				// Get channel tags & add in-progress
-				const thread_channel = await client.rest.getChannel(pending_collab.id);
-				const applied_tags = thread_channel?.appliedTags ?? [];
-				const updated_tags =
-					!applied_tags.includes(THREAD_TAG_ID) && applied_tags.length < 5
-						? [THREAD_TAG_ID, ...applied_tags]
-						: applied_tags;
-
-				// Edit thread channel
-				await client.rest.editChannel(pending_collab.id, {
-					name: pending_collab.name,
-					archived: false,
-					locked: false,
-					appliedTags: updated_tags,
-				});
+				// Unlock the thread and mark it as in progress
+				await unlockCollab(client.rest, pending_collab.id, pending_collab.name);
 				continue;
 			}
 		} else if (reactions_cache.size >= STARS_NEEDED) continue;

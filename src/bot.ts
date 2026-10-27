@@ -1,10 +1,7 @@
 import {
-	ANNOUNCE_CHANNEL_ID,
-	ANNOUNCE_ROLE_ID,
 	BYPASS_ROLE_IDS,
 	GUILD_ID,
 	THREAD_CHANNEL_ID,
-	THREAD_TAG_ID,
 	STARS_NEEDED,
 	TOKEN,
 	USER_COOLDOWN_ROLE_ID,
@@ -28,7 +25,7 @@ import {
 	setPendingCollabBotMessage,
 	setUserCollabCooldown,
 } from "./lib/functions";
-import { ellipsisText, timestamp } from "./utils/text";
+import { announceCollab, ellipsisText, timestamp, unlockCollab } from "./utils";
 
 export const client = new GatewayClient({
 	token: TOKEN,
@@ -90,43 +87,19 @@ export const client = new GatewayClient({
 				]);
 
 				// Add the in-progress tag
-				const thread_channel = await client.rest.getChannel(thread.id);
-				const applied_tags = thread_channel?.appliedTags ?? [];
-				const updated_tags =
-					!applied_tags.includes(THREAD_TAG_ID) && applied_tags.length < 5
-						? [THREAD_TAG_ID, ...applied_tags]
-						: applied_tags;
-				await client.rest.editChannel(thread.id, {
-					appliedTags: updated_tags,
-				});
+				await unlockCollab(client.rest, thread.id, thread.name);
 
 				// Announce the collab
-				const original_message = await client.rest.getMessage(
-					thread.id,
-					thread.id,
-				);
-				await client.rest.sendMessage(ANNOUNCE_CHANNEL_ID, {
-					content: `<@&${ANNOUNCE_ROLE_ID}>`,
-					embeds: [
-						{
-							color: 0xfc0303,
-							description: `
-								# ${thread.name} hosted by <@${thread.owner_id}> is now taking entries!
-								## Check it out here! <#${thread.id}>
-							`,
-							thumbnail: {
-								url: getDisplayAvatarUrl({
-									userId: thread.owner_id,
-									guildId: GUILD_ID,
-									guildAvatar: member?.avatar,
-									userAvatar: member?.user?.avatar,
-								}),
-							},
-							image: original_message?.attachments?.[0]?.proxyUrl
-								? { url: original_message.attachments[0].proxyUrl }
-								: undefined,
-						},
-					],
+				await announceCollab(client.rest, {
+					name: thread.name,
+					hostId: thread.owner_id,
+					threadId: thread.id,
+					avatarUrl: getDisplayAvatarUrl({
+						userId: thread.owner_id,
+						guildId: GUILD_ID,
+						guildAvatar: member?.avatar,
+						userAvatar: member?.user?.avatar,
+					}),
 				});
 				return;
 			}
@@ -258,21 +231,8 @@ export const client = new GatewayClient({
 			// If the collab reached the stars needed, delete it from the database and unlock the thread
 			await deletePendingCollab(reaction.message_id);
 
-			// Get channel tags & add in-progress
-			const thread_channel = await client.rest.getChannel(pending_collab.id);
-			const applied_tags = thread_channel?.appliedTags ?? [];
-			const updated_tags =
-				!applied_tags.includes(THREAD_TAG_ID) && applied_tags.length < 5
-					? [THREAD_TAG_ID, ...applied_tags]
-					: applied_tags;
-
-			// Edit thread channel
-			await client.rest.editChannel(pending_collab.id, {
-				name: pending_collab.name,
-				archived: false,
-				locked: false,
-				appliedTags: updated_tags,
-			});
+			// Unlock the thread and mark it as in progress
+			await unlockCollab(client.rest, pending_collab.id, pending_collab.name);
 
 			// Delete original bot message
 			if (pending_collab.bot_message_id) {
@@ -287,32 +247,16 @@ export const client = new GatewayClient({
 				GUILD_ID,
 				pending_collab.user_id,
 			);
-			const original_message = await client.rest.getMessage(
-				pending_collab.id,
-				pending_collab.id,
-			);
-			await client.rest.sendMessage(ANNOUNCE_CHANNEL_ID, {
-				content: `<@&${ANNOUNCE_ROLE_ID}>`,
-				embeds: [
-					{
-						color: 0xfc0303,
-						description: `
-							# ${pending_collab.name} hosted by <@${pending_collab.user_id}> is now taking entries!
-							## Check it out here! <#${pending_collab.id}>
-						`,
-						thumbnail: {
-							url: getDisplayAvatarUrl({
-								userId: pending_collab.user_id,
-								guildId: GUILD_ID,
-								guildAvatar: host_user?.avatar,
-								userAvatar: host_user?.user?.avatar,
-							}),
-						},
-						image: original_message?.attachments?.[0]?.proxyUrl
-							? { url: original_message.attachments[0].proxyUrl }
-							: undefined,
-					},
-				],
+			await announceCollab(client.rest, {
+				name: pending_collab.name,
+				hostId: pending_collab.user_id,
+				threadId: pending_collab.id,
+				avatarUrl: getDisplayAvatarUrl({
+					userId: pending_collab.user_id,
+					guildId: GUILD_ID,
+					guildAvatar: host_user?.avatar,
+					userAvatar: host_user?.user?.avatar,
+				}),
 			});
 		},
 		[ListenerEvent.MessageReactionRemove]: async (reaction) => {
