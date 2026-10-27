@@ -252,9 +252,12 @@ export const client = new GatewayClient({
 							## Check it out here! <#${pending_collab.id}>
 						`,
 						thumbnail: {
-							url: host_user?.user.avatar
-								? `https://cdn.discordapp.com/avatars/${pending_collab.user_id}/${host_user.user.avatar}`
-								: `https://cdn.discordapp.com/embed/avatars/${(BigInt(pending_collab.user_id) >> 22n) % 6n}`,
+							url: getDisplayAvatarUrl({
+								userId: pending_collab.user_id,
+								guildId: GUILD_ID,
+								guildAvatar: host_user?.avatar,
+								userAvatar: host_user?.user?.avatar,
+							}),
 						},
 						image: original_message?.attachments?.[0]?.proxyUrl
 							? { url: original_message.attachments[0].proxyUrl }
