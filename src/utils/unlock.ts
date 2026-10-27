@@ -2,7 +2,7 @@ import { THREAD_TAG_ID } from "~/env";
 import type { RestManager } from "@discordeno/rest";
 
 /**
- * 
+ * Unlock collabs thread
  * @param rest The Discordeno REST manager
  * @param threadId The thread ID
  * @param name The name of the collab

@@ -2,7 +2,7 @@ import { ANNOUNCE_CHANNEL_ID, ANNOUNCE_ROLE_ID } from "~/env";
 import type { RestManager } from "@discordeno/rest";
 
 /**
- * Announce a live collab in the announce channel
+ * Announce collab
  * @param rest The Discordeno REST manager
  * @param data The data needed to announce a collab
  */
