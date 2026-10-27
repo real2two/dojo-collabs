@@ -4,6 +4,7 @@ import {
 	BYPASS_ROLE_IDS,
 	GUILD_ID,
 	THREAD_CHANNEL_ID,
+	THREAD_TAG_ID,
 	STARS_NEEDED,
 	TOKEN,
 	USER_COOLDOWN_ROLE_ID,
@@ -243,10 +244,21 @@ export const client = new GatewayClient({
 
 			// If the collab reached the stars needed, delete it from the database and unlock the thread
 			await deletePendingCollab(reaction.message_id);
+
+			// Get channel tags & add in-progress
+			const thread_channel = await client.rest.getChannel(pending_collab.id);
+			const applied_tags = thread_channel?.appliedTags ?? [];
+			const updated_tags =
+				!applied_tags.includes(THREAD_TAG_ID) && applied_tags.length < 5
+					? [THREAD_TAG_ID, ...applied_tags]
+					: applied_tags;
+
+			// Edit thread channel
 			await client.rest.editChannel(pending_collab.id, {
 				name: pending_collab.name,
 				archived: false,
 				locked: false,
+				appliedTags: updated_tags,
 			});
 
 			// Delete original bot message

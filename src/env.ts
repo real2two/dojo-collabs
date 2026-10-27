@@ -1,7 +1,9 @@
 export const TOKEN = process.env.TOKEN;
 
 export const GUILD_ID = process.env.GUILD_ID;
+
 export const THREAD_CHANNEL_ID = process.env.THREAD_CHANNEL_ID;
+export const THREAD_TAG_ID = process.env.THREAD_TAG_ID;
 
 export const USER_COOLDOWN_TIME = Number.parseInt(
 	process.env.USER_COOLDOWN_TIME,
@@ -29,6 +31,7 @@ declare global {
 			USER_COOLDOWN_ROLE_ID: string;
 			STARS_NEEDED: string;
 			VOTING_PERIOD_TIME: string;
+			THREAD_TAG_ID: string;
 			BYPASS_ROLE_IDS: string;
 			ANNOUNCE_ROLE_ID: string;
 			ANNOUNCE_CHANNEL_ID: string;
