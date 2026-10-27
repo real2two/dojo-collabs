@@ -98,18 +98,19 @@ export async function createPendingCollab({
 	id,
 	name,
 	user_id,
+	created_at,
 }: {
 	id: string;
 	name: string;
 	user_id: string;
+	created_at: number;
 }) {
 	// Save in cache
-	const created_at = new Date();
 	pending_collabs_cache.set(id, {
 		name,
 		user_id,
 		bot_message_id: null,
-		created_at: created_at.getTime(),
+		created_at,
 	});
 
 	// Save in database
@@ -119,7 +120,7 @@ export async function createPendingCollab({
 			id,
 			name,
 			user_id,
-			created_at,
+			created_at: new Date(created_at),
 		})
 		.onConflictDoNothing();
 	return result.changes > 0;

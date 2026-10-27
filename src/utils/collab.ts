@@ -62,6 +62,7 @@ export async function createCollab(
 			id: thread.id,
 			name: thread.name,
 			user_id: thread.ownerId,
+			created_at: thread.createdAt,
 		});
 		if (!createdCollab) return;
 
