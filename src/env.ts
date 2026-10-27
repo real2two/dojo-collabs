@@ -12,7 +12,6 @@ export const STARS_NEEDED = Number.parseInt(process.env.STARS_NEEDED);
 export const VOTING_PERIOD_TIME = Number.parseInt(
 	process.env.VOTING_PERIOD_TIME,
 );
-export const RANDOM_IMAGE_API = process.env.RANDOM_IMAGE_API;
 export const BYPASS_ROLE_IDS = process.env.BYPASS_ROLE_IDS.split(",");
 
 export const ANNOUNCE_ROLE_ID = process.env.ANNOUNCE_ROLE_ID;
@@ -30,7 +29,6 @@ declare global {
 			USER_COOLDOWN_ROLE_ID: string;
 			STARS_NEEDED: string;
 			VOTING_PERIOD_TIME: string;
-			RANDOM_IMAGE_API: string;
 			BYPASS_ROLE_IDS: string;
 			ANNOUNCE_ROLE_ID: string;
 			ANNOUNCE_CHANNEL_ID: string;

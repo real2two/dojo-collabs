@@ -4,7 +4,6 @@ import {
 	BYPASS_ROLE_IDS,
 	GUILD_ID,
 	THREAD_CHANNEL_ID,
-	RANDOM_IMAGE_API,
 	STARS_NEEDED,
 	TOKEN,
 	USER_COOLDOWN_ROLE_ID,
@@ -16,7 +15,7 @@ import {
 	deleteStarReactionsCache,
 	getStarReactionsCache,
 } from "./cache";
-import { GatewayClient, ListenerEvent } from "./lib/bot";
+import { GatewayClient, ListenerEvent, getDisplayAvatarUrl } from "./lib/bot";
 import {
 	createPendingCollab,
 	deletePendingCollab,
@@ -127,12 +126,14 @@ export const client = new GatewayClient({
 							## ${STARS_NEEDED} ⭐ needed for this collab to go live!
 							## Voting period ends ${timestamp(Date.now() + VOTING_PERIOD_TIME)}
 						`,
-						thumbnail: RANDOM_IMAGE_API
-							? {
-									// The point of the "r" is to pick choose a new image every time (in case the image gets cached)
-									url: `${RANDOM_IMAGE_API}?r=${Date.now()}`,
-								}
-							: undefined,
+						thumbnail: {
+							url: getDisplayAvatarUrl({
+								userId: thread.owner_id,
+								guildId: thread.guild_id,
+								guildAvatar: member?.avatar,
+								userAvatar: member?.user?.avatar,
+							}),
+						},
 					},
 				],
 			});
