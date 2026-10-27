@@ -28,7 +28,7 @@ import {
 	setPendingCollabBotMessage,
 	setUserCollabCooldown,
 } from "./lib/functions";
-import { ellipsisText, timestamp } from "./utils";
+import { ellipsisText, timestamp } from "./utils/text";
 
 export const client = new GatewayClient({
 	token: TOKEN,
