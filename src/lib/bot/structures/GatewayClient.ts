@@ -5,7 +5,7 @@ import {
 	createGatewayManager,
 } from "@discordeno/gateway";
 import { type RestManager, createRestManager } from "@discordeno/rest";
-import type { ListenerEventData } from "../utils/events";
+import type { ListenerEventData } from "../utils";
 
 // This is based on @discordeno/bot but I created a minimal version of it
 
