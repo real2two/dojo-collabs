@@ -86,7 +86,7 @@ export async function createCollab(
 					# This collab is locked and under community review! React to this post if you like the idea of this collab!
 					## ${STARS_NEEDED} ⭐ needed for this collab to go live!
 					## Voting period ends ${timestamp(Date.now() + VOTING_PERIOD_TIME)}
-				`,
+				`.trim(),
 				thumbnail: {
 					url: getDisplayAvatarUrl({
 						userId: thread.ownerId,

@@ -31,7 +31,7 @@ export async function announceCollab(
 				description: `
 					# ${name} hosted by <@${hostId}> is now taking entries!
 					## Check it out here! <#${threadId}>
-				`,
+				`.trim(),
 				thumbnail: { url: avatarUrl },
 				image: imageUrl ? { url: imageUrl } : undefined,
 			},
