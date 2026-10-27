@@ -85,6 +85,37 @@ export const client = new GatewayClient({
 			await deletePendingCollab(thread.id);
 			deleteStarReactionsCache(thread.id);
 		},
+		[ListenerEvent.MessageDelete]: async (message) => {
+			// Check if it's from the collabs guild
+			if (message.guild_id !== GUILD_ID) return;
+
+			// Check if the deleted message is the original message of a pending collab
+			const pending_collab = getCachedPendingCollab(message.id);
+			if (!pending_collab) return;
+
+			// Delete the collab thread
+			try {
+				await client.rest.deleteChannel(pending_collab.id);
+			} catch (err) {
+				console.error(err);
+			}
+
+			// Delete pending collab from the database and cache
+			await deletePendingCollab(pending_collab.id);
+			deleteStarReactionsCache(pending_collab.id);
+
+			// Remove the user's cooldown role and timer since the collab was deleted
+			try {
+				await client.rest.removeRole(
+					GUILD_ID,
+					pending_collab.user_id,
+					USER_COOLDOWN_ROLE_ID,
+				);
+			} catch (err) {
+				console.error(err);
+			}
+			await removeUserCollabCooldown(pending_collab.user_id);
+		},
 		[ListenerEvent.MessageReactionAdd]: async (reaction) => {
 			// Check if it's from the collabs thread channel and if it's a newly created thread
 			if (reaction.guild_id !== GUILD_ID) return;

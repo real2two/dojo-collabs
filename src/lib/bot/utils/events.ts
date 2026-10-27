@@ -5,6 +5,7 @@ import {
 	GatewayDispatchEvents,
 	type GatewayGuildMemberAddDispatchData,
 	type GatewayGuildMemberUpdateDispatchData,
+	type GatewayMessageDeleteDispatchData,
 	type GatewayMessageReactionAddDispatchData,
 	type GatewayMessageReactionRemoveAllDispatchData,
 	type GatewayMessageReactionRemoveDispatchData,
@@ -20,6 +21,7 @@ export const ListenerEvent = {
 	GuildMemberAdd: GatewayDispatchEvents.GuildMemberAdd,
 	ThreadCreate: GatewayDispatchEvents.ThreadCreate,
 	ThreadDelete: GatewayDispatchEvents.ThreadDelete,
+	MessageDelete: GatewayDispatchEvents.MessageDelete,
 	MessageReactionAdd: GatewayDispatchEvents.MessageReactionAdd,
 	MessageReactionRemove: GatewayDispatchEvents.MessageReactionRemove,
 	MessageReactionRemoveEmoji: GatewayDispatchEvents.MessageReactionRemoveEmoji,
@@ -34,6 +36,7 @@ export type ListenerEventData = {
 	[ListenerEvent.GuildMemberAdd]: GatewayGuildMemberAddDispatchData;
 	[ListenerEvent.ThreadCreate]: GatewayThreadCreateDispatchData;
 	[ListenerEvent.ThreadDelete]: GatewayThreadDeleteDispatchData;
+	[ListenerEvent.MessageDelete]: GatewayMessageDeleteDispatchData;
 	[ListenerEvent.MessageReactionAdd]: GatewayMessageReactionAddDispatchData;
 	[ListenerEvent.MessageReactionRemove]: GatewayMessageReactionRemoveDispatchData;
 	[ListenerEvent.MessageReactionRemoveEmoji]: GatewayMessageReactionRemoveEmojiDispatchData;
