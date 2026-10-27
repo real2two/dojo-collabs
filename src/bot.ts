@@ -79,20 +79,13 @@ export const client = new GatewayClient({
 				return;
 
 			// Get the member and check if they can bypass the reaction restriction
-			const member = await client.rest.getMember(
-				thread.guild_id,
-				thread.owner_id,
-			);
+			const member = await client.rest.getMember(GUILD_ID, thread.owner_id);
 
 			// If user has bypass role (ex. collaborator):
 			if (member?.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
 				// Give collab cooldown
 				await Promise.all([
-					client.rest.addRole(
-						thread.guild_id,
-						thread.owner_id,
-						USER_COOLDOWN_ROLE_ID,
-					),
+					client.rest.addRole(GUILD_ID, thread.owner_id, USER_COOLDOWN_ROLE_ID),
 					setUserCollabCooldown(thread.owner_id),
 				]);
 
@@ -124,7 +117,7 @@ export const client = new GatewayClient({
 							thumbnail: {
 								url: getDisplayAvatarUrl({
 									userId: thread.owner_id,
-									guildId: thread.guild_id,
+									guildId: GUILD_ID,
 									guildAvatar: member?.avatar,
 									userAvatar: member?.user?.avatar,
 								}),
@@ -155,11 +148,7 @@ export const client = new GatewayClient({
 				}),
 
 				// Add collab cooldown role
-				client.rest.addRole(
-					thread.guild_id,
-					thread.owner_id,
-					USER_COOLDOWN_ROLE_ID,
-				),
+				client.rest.addRole(GUILD_ID, thread.owner_id, USER_COOLDOWN_ROLE_ID),
 
 				// Set collab cooldown timer
 				setUserCollabCooldown(thread.owner_id),
@@ -178,7 +167,7 @@ export const client = new GatewayClient({
 						thumbnail: {
 							url: getDisplayAvatarUrl({
 								userId: thread.owner_id,
-								guildId: thread.guild_id,
+								guildId: GUILD_ID,
 								guildAvatar: member?.avatar,
 								userAvatar: member?.user?.avatar,
 							}),
