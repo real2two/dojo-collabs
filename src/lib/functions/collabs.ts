@@ -130,7 +130,7 @@ export async function setPendingCollabBotMessage({
 		.update(pending_collabs)
 		.set({ bot_message_id })
 		.where(eq(pending_collabs.id, id));
-	return !!success.rowCount;
+	return !!success.changes;
 }
 
 /**
