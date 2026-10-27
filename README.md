@@ -1,4 +1,8 @@
-# thread star bot
+# Collabs Bot
+
+This is the source code for the Collabs Bot in the Hyun Dojo Community's Discord server.
+
+## Setup
 
 To install dependencies:
 
