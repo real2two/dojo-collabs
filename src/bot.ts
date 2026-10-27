@@ -75,6 +75,9 @@ export const client = new GatewayClient({
 				name: thread.name,
 				ownerId: thread.owner_id,
 				guildId: thread.guild_id,
+				createdAt: new Date(
+					thread.thread_metadata?.create_timestamp ?? Date.now(),
+				).getTime(),
 			});
 		},
 		[ListenerEvent.ThreadDelete]: async (thread) => {

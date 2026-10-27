@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { db, last_collab_timestamp } from "../db";
 
 /**
@@ -28,6 +28,8 @@ export async function setLastCollabTimestamp(
 		.values({ id: channelId, lastTimestamp })
 		.onConflictDoUpdate({
 			target: last_collab_timestamp.id,
-			set: { lastTimestamp },
+			set: {
+				lastTimestamp: sql`max(${last_collab_timestamp.lastTimestamp}, excluded.last_timestamp)`,
+			},
 		});
 }
