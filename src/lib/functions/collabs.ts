@@ -84,7 +84,11 @@ export async function createPendingCollab({
 	id,
 	name,
 	user_id,
-}: { id: string; name: string; user_id: string }) {
+}: {
+	id: string;
+	name: string;
+	user_id: string;
+}) {
 	// Save in cache
 	const created_at = new Date();
 	pending_collabs_cache.set(id, {
@@ -110,7 +114,10 @@ export async function createPendingCollab({
 export async function setPendingCollabBotMessage({
 	id,
 	bot_message_id,
-}: { id: string; bot_message_id: string }) {
+}: {
+	id: string;
+	bot_message_id: string;
+}) {
 	// Get if the collab is cached. If it's not, fail.
 	const pending_collab = pending_collabs_cache.get(id);
 	if (!pending_collab) return false;

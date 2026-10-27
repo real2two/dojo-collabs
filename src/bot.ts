@@ -69,7 +69,7 @@ export const client = new GatewayClient({
 			if (member?.roles.some((role) => BYPASS_ROLE_IDS.includes(role))) {
 				await finished_creating_pending_collab;
 				deletePendingCollab(thread.id);
-				
+
 				const original_message = await client.rest.getMessage(
 					thread.id,
 					thread.id,
