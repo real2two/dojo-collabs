@@ -15,6 +15,7 @@ import {
 	getAllCollabCooldownToRemove,
 	getExpiredPendingCollabs,
 	removeManyCollabCooldowns,
+	removeUserCollabCooldown,
 } from "./lib/functions";
 
 // Start the cron task where the function "handleDeleting" is ran every minutes
@@ -76,5 +77,17 @@ async function handleDeleting() {
 		// Delete the pending collab from the database
 		await deletePendingCollab(pending_collab.id);
 		deleteStarReactionsCache(pending_collab.id);
+
+		// Removes the user's cooldown if collab fails to get out of pending status
+		try {
+			await client.rest.removeRole(
+				GUILD_ID,
+				pending_collab.user_id,
+				USER_COOLDOWN_ROLE_ID,
+			);
+		} catch (err) {
+			console.error(err);
+		}
+		await removeUserCollabCooldown(pending_collab.user_id);
 	}
 }
