@@ -49,46 +49,57 @@ async function handleDeleting() {
 		const reactions_cache = getStarReactionsCache(pending_collab.id);
 		if (!reactions_cache) {
 			// If the reactions aren't cached, check the reactions the thread has
-			const reactions = await client.rest.getReactions(
-				pending_collab.id,
-				pending_collab.id,
-				"⭐",
-				{ type: DiscordReactionType.Normal, limit: STARS_NEEDED },
-			);
-
-			// If it passes the reactions limit, accept the collab
-			// This can happen when the bot turns off, it passes the reaction requirement and nothing else is done.
-			if (reactions && reactions.length >= STARS_NEEDED) {
-				await deletePendingCollab(pending_collab.id);
-
-				// Unlock the thread and mark it as in progress
-				await unlockCollab(client.rest, pending_collab.id, pending_collab.name);
-
-				// Delete the bot's review message
-				if (pending_collab.bot_message_id) {
-					await client.rest.deleteMessage(
-						pending_collab.id,
-						pending_collab.bot_message_id,
-					);
-				}
-
-				// Send an announcement message
-				const host_user = await client.rest.getMember(
-					GUILD_ID,
-					pending_collab.user_id,
+			try {
+				const reactions = await client.rest.getReactions(
+					pending_collab.id,
+					pending_collab.id,
+					"⭐",
+					{ type: DiscordReactionType.Normal, limit: STARS_NEEDED },
 				);
-				await announceCollab(client.rest, {
-					name: pending_collab.name,
-					hostId: pending_collab.user_id,
-					threadId: pending_collab.id,
-					avatarUrl: getDisplayAvatarUrl({
-						userId: pending_collab.user_id,
-						guildId: GUILD_ID,
-						guildAvatar: host_user?.avatar,
-						userAvatar: host_user?.user?.avatar,
-					}),
-				});
-				continue;
+
+				// If it passes the reactions limit, accept the collab
+				// This can happen when the bot turns off, it passes the reaction requirement and nothing else is done.
+				if (reactions && reactions.length >= STARS_NEEDED) {
+					await deletePendingCollab(pending_collab.id);
+
+					// Unlock the thread and mark it as in progress
+					await unlockCollab(
+						client.rest,
+						pending_collab.id,
+						pending_collab.name,
+					);
+
+					// Delete the bot's review message
+					if (pending_collab.bot_message_id) {
+						await client.rest.deleteMessage(
+							pending_collab.id,
+							pending_collab.bot_message_id,
+						);
+					}
+
+					// Send an announcement message
+					const host_user = await client.rest.getMember(
+						GUILD_ID,
+						pending_collab.user_id,
+					);
+					await announceCollab(client.rest, {
+						name: pending_collab.name,
+						hostId: pending_collab.user_id,
+						threadId: pending_collab.id,
+						avatarUrl: getDisplayAvatarUrl({
+							userId: pending_collab.user_id,
+							guildId: GUILD_ID,
+							guildAvatar: host_user?.avatar,
+							userAvatar: host_user?.user?.avatar,
+						}),
+					});
+					continue;
+				}
+			} catch (err) {
+				console.error(
+					`Failed to fetch reactions for pending collab ${pending_collab.id}:`,
+					err,
+				);
 			}
 		} else if (reactions_cache.size >= STARS_NEEDED) continue;
 
