@@ -70,7 +70,6 @@ export async function createCollab(
 			// Lock the thread
 			rest.editChannel(thread.id, {
 				name: ellipsisText(`(REVIEW) ${thread.name}`, 100),
-				archived: true,
 				locked: true,
 			}),
 

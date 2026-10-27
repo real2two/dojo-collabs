@@ -22,7 +22,6 @@ export async function unlockCollab(
 
 	await rest.editChannel(threadId, {
 		name,
-		archived: false,
 		locked: false,
 		appliedTags: newTags,
 	});
