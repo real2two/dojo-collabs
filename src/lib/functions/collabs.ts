@@ -61,6 +61,19 @@ export async function getExpiredPendingCollabs(voting_period_time: number) {
 }
 
 /**
+ * Check if a user has any pending collab
+ * @param user_id The user ID to check
+ */
+export async function hasPendingCollab(user_id: string) {
+	const pending_collabs_rows = await db
+		.select({ id: pending_collabs.id })
+		.from(pending_collabs)
+		.where(eq(pending_collabs.user_id, user_id))
+		.limit(1);
+	return pending_collabs_rows.length > 0;
+}
+
+/**
  * Get a pending collab
  * @param id The message ID of the first thread message
  */

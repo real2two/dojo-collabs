@@ -7,6 +7,7 @@ import {
 	STARS_NEEDED,
 	TOKEN,
 	USER_COOLDOWN_ROLE_ID,
+	USER_COOLDOWN_TIME,
 	VOTING_PERIOD_TIME,
 } from "$env";
 import { DiscordReactionType, Intents } from "@discordeno/bot";
@@ -20,6 +21,8 @@ import {
 	createPendingCollab,
 	deletePendingCollab,
 	getCachedPendingCollab,
+	getUserCollabCooldown,
+	hasPendingCollab,
 	removeUserCollabCooldown,
 	setPendingCollabBotMessage,
 	setUserCollabCooldown,
@@ -42,6 +45,27 @@ export const client = new GatewayClient({
 
 			// Assume the user had the role and remove cooldown timer from the database
 			await removeUserCollabCooldown(member.user.id);
+		},
+		[ListenerEvent.GuildMemberAdd]: async (member) => {
+			// If the user rejoined and still has an active cooldown, give the role back
+			if (member.roles.includes(USER_COOLDOWN_ROLE_ID)) return;
+
+			const [cooldown, has_pending_collab] = await Promise.all([
+				getUserCollabCooldown(member.user.id),
+				hasPendingCollab(member.user.id),
+			]);
+
+			const cooldown_is_active =
+				cooldown &&
+				cooldown.created_at.getTime() + USER_COOLDOWN_TIME > Date.now();
+
+			if (cooldown_is_active || has_pending_collab) {
+				await client.rest.addRole(
+					member.guild_id,
+					member.user.id,
+					USER_COOLDOWN_ROLE_ID,
+				);
+			}
 		},
 		[ListenerEvent.ThreadCreate]: async (thread) => {
 			// Check if it's from the collabs thread channel and if it's a newly created thread

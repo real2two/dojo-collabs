@@ -34,10 +34,6 @@ pnpm schema/migrate
 
 Here are additional notes I wrote for myself:
 
-### TODO
-
-- Give the collab cooldown role if the user left and joined back the server.
-
 ### Main comments
 
 - I used [`DrizzleORM`](https://orm.drizzle.team/) _(ORM)_ + [`SQLite`](https://www.sqlite.org/) _(database)_ for this project. The database file is configured with `DATABASE_URL` in `.env`. You can use the script `pnpm schema/push` _(to forcefully push data, FOR TESTING ONLY - DO NOT USE IN PRODUCTION)_ and `pnpm schema/generate` _(to generate new schemas you can use for `pnpm schema/migrate`)_ as well.

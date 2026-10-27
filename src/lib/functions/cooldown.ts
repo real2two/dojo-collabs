@@ -15,6 +15,18 @@ export async function getAllCollabCooldownToRemove(cooldown_time: number) {
 }
 
 /**
+ * Get the collab cooldown for a user
+ * @param user_id The user ID to get the cooldown for
+ */
+export async function getUserCollabCooldown(user_id: string) {
+	const collab_cooldowns = await db
+		.select()
+		.from(collab_cooldown)
+		.where(eq(collab_cooldown.id, user_id));
+	return collab_cooldowns[0];
+}
+
+/**
  * Set the collab cooldown on someone
  * @param user_id The user ID to set the cooldown to
  */
