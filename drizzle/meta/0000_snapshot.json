@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "d1a88ed2-b7e9-45d7-9f1a-1f518148d1ce",
+  "id": "059cc2c4-197a-4e72-b9ba-64734b866891",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "collab_cooldown": {
