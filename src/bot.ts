@@ -149,6 +149,9 @@ export const client = new GatewayClient({
 				],
 			});
 
+			// React star to thread
+			await client.rest.addReaction(thread.id, thread.id, "⭐");
+
 			// Leave the thread
 			await client.rest.leaveThread(thread.id);
 
