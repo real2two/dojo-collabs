@@ -66,7 +66,7 @@ export async function createCollab(
 		});
 		if (!createdCollab) return;
 
-		await Promise.all([
+		await Promise.allSettled([
 			// Lock the thread
 			rest.editChannel(thread.id, {
 				name: ellipsisText(`(REVIEW) ${thread.name}`, 100),
@@ -103,10 +103,18 @@ export async function createCollab(
 		});
 
 		// Seed the starter message with a star so the bot counts toward the goal
-		await rest.addReaction(thread.id, thread.id, "⭐");
+        try {
+		    await rest.addReaction(thread.id, thread.id, "⭐");
+        } catch (err) {
+            console.error("Failed to react to new thread message:", err);
+        }
 
 		// Leave the thread
-		await rest.leaveThread(thread.id);
+        try {
+		    await rest.leaveThread(thread.id);
+        } catch (err) {
+            console.error("Failed to leave thread:", err);
+        }
 
 		// Save the bot's message ID into the database
 		const saved_message_into_db = await setPendingCollabBotMessage({
